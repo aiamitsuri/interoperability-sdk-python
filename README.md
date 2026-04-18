@@ -5,21 +5,20 @@ Basic Usage
             import interoperability_wrapper_pyo3 as sdk
             self.sdk = sdk
     
-        def fetch_interoperability(self, url: str, params_json: str) -> str:
+        def fetch_interoperability(self, params_json: str) -> str:
             return self.sdk.fetch_from_python(params_json)
     
         def run_demo(self):
-            url = ""
             params = '{"page": "1"}'
     
             print("Python SDK")
     
-            response = self.fetch_interoperability(url, params)
+            response = self.fetch_interoperability(params)
             print(response)
     
     if __name__ == "__main__":
         PySDKit().run_demo()
-
+    
 Dynamic Usage
 
     import json
@@ -44,22 +43,21 @@ Dynamic Usage
             import interoperability_wrapper_pyo3 as sdk
             self.sdk = sdk
     
-        def fetch_interoperability(self, url: str, params_json: str) -> str:
+        def fetch_interoperability(self, params_json: str) -> str:
             return self.sdk.fetch_from_python(params_json)
     
-        def fetch_page(self, url: str, page: int) -> str:
+        def fetch_page(self, page: int) -> str:
             params = json.dumps({"page": str(page)})
-            return self.fetch_interoperability(url, params)
+            return self.fetch_interoperability(params)
     
     def main():
         sdk = PySDKit()
-        url = ""
         
         print("--- Bhilani Interop SDK ---")
     
         for page_num in range(1, 6):
             try:
-                response_str = sdk.fetch_page(url, page_num)
+                response_str = sdk.fetch_page(page_num)
                 raw_json = json.loads(response_str)
     
                 pagination = Pagination(total_pages=raw_json["pagination"]["total_pages"])
@@ -77,7 +75,7 @@ Dynamic Usage
     
     if __name__ == "__main__":
         main()
-
+        
 Concurrent Usage
 
     import asyncio
@@ -104,11 +102,11 @@ Concurrent Usage
             import interoperability_wrapper_pyo3 as sdk
             self.sdk = sdk
     
-        async def fetch_pages(self, url: str, page_range: range):
-            tasks = [self._fetch_single_page(url, page) for page in page_range]
+        async def fetch_pages(self, page_range: range):
+            tasks = [self._fetch_single_page(page) for page in page_range]
             return await asyncio.gather(*tasks)
     
-        async def _fetch_single_page(self, url: str, page: int):
+        async def _fetch_single_page(self, page: int):
             await asyncio.sleep(random.uniform(0.05, 0.25))
             try:
                 params = json.dumps({"page": str(page)})
@@ -122,11 +120,10 @@ Concurrent Usage
     
     async def main():
         sdk = PySDKit()
-        url = ""
         
         print("--- Bhilani Interop SDK (Python Concurrency) ---")
     
-        results = await sdk.fetch_pages(url, range(1, 6))
+        results = await sdk.fetch_pages(range(1, 6))
     
         for index, result in enumerate(results):
             page_num = index + 1
