@@ -6,24 +6,34 @@ Run SDK
 
 Basic Usage
 
-    class PySDKit:
-        def __init__(self):
-            import interoperability_wrapper_pyo3 as sdk
-            self.sdk = sdk
+    import json
+    import interoperability_wrapper_pyo3 as sdk
     
-        def fetch_interoperability(self, params_json: str) -> str:
-            return self.sdk.fetch_from_python(params_json)
+    params = {
+        "language": None,
+        "integration": None,
+        "crates": None,
+        "developmentkit": None,
+        "page": "1",
+        "ids": None
+    }
     
-        def run_demo(self):
-            params = '{"page": "1"}'
+    def fetch_interoperability(params_dict):
+        try:
+            # Convert dict to JSON string
+            params_json = json.dumps(params_dict)
+            return sdk.fetch_from_python(params_json)
+        except Exception as e:
+            return f"Native Interop Failed: {e}"
     
-            print("Python SDK")
-    
-            response = self.fetch_interoperability(params)
-            print(response)
+    def main():
+        print("Python SDK")
+        
+        response = fetch_interoperability(params)
+        print(response)
     
     if __name__ == "__main__":
-        PySDKit().run_demo()
+        main()
     
 Dynamic Usage
 
